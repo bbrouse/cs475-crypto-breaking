@@ -1,4 +1,4 @@
 cs475-crypto-breaking
 =====================
 
-Crypto on time pad breaking for CS 475 assignment 2.
+Crypto one time pad breaking for CS 475 assignment 2.
