@@ -43,7 +43,7 @@ def is_valid_in_second_order(letters, statistics):
     for pos, letter in enumerate(letters):
         letter = str.lower(letter)
         try:
-            if not statistics[letter][str.lower(letters[pos+1])] > 0.01:
+            if not statistics[letter][str.lower(letters[pos+1])] > 0.001:
                 return False
         except IndexError:
             break
@@ -72,7 +72,6 @@ def print_crib_drag(filename1, filename2):
     cipher_xor = []
     statistics = get_order_stats()
     matches = []
-    #print statistics
 
     message1 = ["_"]*128
     message2 = ["_"]*128
@@ -101,7 +100,7 @@ def print_crib_drag(filename1, filename2):
                 position += 1
 
             is_text = True
-            is_valid = True
+            is_valid = False
             for letter in output:
                 if not ord(letter) in acceptable_chars:
                     is_text = False
