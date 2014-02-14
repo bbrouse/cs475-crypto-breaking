@@ -3,8 +3,8 @@ import sys
 import binascii
 from itertools import izip
 import time
+from sets import Set
 
-statistics = None
 
 class bcolors:
     #Used for printing colors in terminal
@@ -52,21 +52,23 @@ def is_valid_in_second_order(letters, statistics):
     return True
 
 
-def get_cribs(use_dictionary=False):
-    if use_dictionary:
-        crib_file = open("/usr/share/dict/connectives")
-        formatting = " {} "
-    else:
-        crib_file = open("cribs")
-        formatting = "{}"
+def get_cribs():
     cribs = []
+
+    crib_file = open("/usr/share/dict/connectives")
+    formatting = " {} "
     for line in crib_file:
         cribs.append(formatting.format(line.strip('\n')))
 
-    return cribs
+    crib_file = open("cribs")
+    formatting = "{}"
+    for line in crib_file:
+        cribs.append(formatting.format(line.strip('\n')))
+
+    return sorted(Set(cribs))
 
 
-def print_crib_drag(filename1, filename2):
+def print_crib_drag(filename1, filename2, crib=""):
     file1 = open(filename1)
     file2 = open(filename2)
     cipher_xor = []
@@ -79,7 +81,10 @@ def print_crib_drag(filename1, filename2):
     acceptable_chars = range(65, 91) + range(97, 123) + [46, 32]
 
     print "Gathering cribs"
-    cribs = get_cribs()
+    if crib:
+        cribs = [crib]
+    else:
+        cribs = get_cribs()
 
     for crib in cribs:
         for line1, line2 in izip(file1, file2):
@@ -110,7 +115,7 @@ def print_crib_drag(filename1, filename2):
                 is_valid = is_valid_in_second_order(output, statistics)
 
             if is_text and is_valid:
-                matches.append((crib, output))
+                matches.append([position, crib, output])
 
             '''
             if is_text and is_valid:
@@ -126,7 +131,7 @@ def print_crib_drag(filename1, filename2):
         print match
 
 
-def print_xor_files(filename1, filename2, output_hex=False):
+def print_xor_files(filename1, filename2, pretty_print=False, output_hex=False):
     file1 = open(filename1)
     file2 = open(filename2)
     output = ""
@@ -143,10 +148,13 @@ def print_xor_files(filename1, filename2, output_hex=False):
         if len(xor) == 1:
             xor = '0' + xor
 
-        if output_hex:
-            output += "{}: {}\n".format(position, xor + bcolors.ENDC)
+        if pretty_print:
+            if output_hex:
+                output += "{}: {}\n".format(position, xor + bcolors.ENDC)
+            else:
+                output += "{}: {}\n".format(position, binascii.unhexlify(xor) + bcolors.ENDC)
         else:
-            output += "{}: {}\n".format(position, binascii.unhexlify(xor) + bcolors.ENDC)
+            output += binascii.unhexlify(xor) + bcolors.ENDC
 
         position += 1
 
@@ -172,5 +180,5 @@ def print_from_file(filename):
 
 if __name__ == "__main__":
     #print_from_file(sys.argv[1])
-    #print_xor_files(sys.argv[1], sys.argv[2], True)
-    print_crib_drag(sys.argv[1], sys.argv[2])
+    #print_xor_files(sys.argv[1], sys.argv[2])
+    print_crib_drag(sys.argv[1], sys.argv[2], sys.argv[3])
