@@ -43,7 +43,7 @@ def is_valid_in_second_order(letters, statistics):
     for pos, letter in enumerate(letters):
         letter = str.lower(letter)
         try:
-            if not statistics[letter][str.lower(letters[pos+1])] > 0.001:
+            if not statistics[letter][str.lower(letters[pos+1])] > 0.0001:
                 return False
         except IndexError:
             break
@@ -54,16 +54,27 @@ def is_valid_in_second_order(letters, statistics):
 
 def get_cribs():
     cribs = []
-
-    crib_file = open("/usr/share/dict/connectives")
     formatting = " {} "
+    '''
+    crib_file = open("/usr/share/dict/connectives")
     for line in crib_file:
         cribs.append(formatting.format(line.strip('\n')))
+    '''
 
-    crib_file = open("cribs")
-    formatting = "{}"
+    crib_file = open("custom_cribs")
     for line in crib_file:
         cribs.append(formatting.format(line.strip('\n')))
+    '''
+    upper_cribs = []
+    end_sentence_cribs = []
+    for crib in cribs:
+        crib = crib.strip()
+        upper_cribs.append(". {}{}".format(str.upper(crib[0]), crib[1:]))
+        end_sentence_cribs.append(" {}. ".format(crib))
+
+    cribs += upper_cribs
+    cribs += end_sentence_cribs
+    '''
 
     return sorted(Set(cribs))
 
@@ -78,7 +89,7 @@ def print_crib_drag(filename1, filename2, crib=""):
     message1 = ["_"]*128
     message2 = ["_"]*128
 
-    acceptable_chars = range(65, 91) + range(97, 123) + [46, 32]
+    acceptable_chars = range(65, 91) + range(97, 123) + [33, 44, 46, 32, 63]
 
     print "Gathering cribs"
     if crib:
@@ -95,6 +106,8 @@ def print_crib_drag(filename1, filename2, crib=""):
             cipher_xor.append(xor)
 
         for position in range(0, len(cipher_xor)-len(crib)):
+        #for position in range(0, 30):
+            start_position = position
             output = ""
             for crib_letter in crib:
                 cipher_hex = cipher_xor[position]
@@ -115,7 +128,7 @@ def print_crib_drag(filename1, filename2, crib=""):
                 is_valid = is_valid_in_second_order(output, statistics)
 
             if is_text and is_valid:
-                matches.append([position, crib, output])
+                matches.append([start_position, crib, output])
 
             '''
             if is_text and is_valid:
