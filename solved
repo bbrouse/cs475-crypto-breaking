@@ -9,5 +9,6 @@ To die, to sleep - To sleep, perchance to dream --ay, there's the rub, for in th
 Just a small town girl \nLivin' in a lonely world \nShe took the midnight train goin' anywhere Just a city boy \nBorn and raised i
 
 Messages form ct3.hex and ct6.hex shared pad:
-NOTSOLVED
-NOTSOLVED
+
+// MailBody builders for outgoing messages\nStringBuilder hanz = new StringBuilder();\nStringBuilder franz = new StringBuilder();
+\tsyslog(LOG_NOTICE, "%s by %s: %s",\n\tdoreboot ? "reboot" : dohalt ? "halt" : dopower ? "power-down" :\n\t"shutdown", whom, mbuf);
